@@ -6,4 +6,4 @@ var birth = parseInt(prompt('Hola ' + name + ' ' + lastName  + ', cómo andas? E
 
 var age = year - birth;
 
-alert('Gracias' + name + ', tenes o vas a tener ' + age + ' años.')
+alert('Gracias ' + name + ', tenes o vas a tener ' + age + ' años.')
