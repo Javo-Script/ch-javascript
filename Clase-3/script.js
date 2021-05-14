@@ -7,7 +7,7 @@ do {
   attempts = attempts + 1;
 } while ((number < 100) && !(guessNumber==number)){
   if (number > 100) {
-    alert("Ingresaste un valor mayor a 1000. Refresca la página para empezar de vuelta");
+    alert("Ingresaste un valor mayor a 100. Refresca la página para empezar de vuelta");
   } else {
     alert("Muy bien!!! Te tomó " + attempts + " intentos, pero lo adivinaste.");
   }
