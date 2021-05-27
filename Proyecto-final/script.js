@@ -29,16 +29,17 @@ dateUntil = (d) => {
 
 
 class Servicio{
-  constructor(id, title, description, price){
+  constructor(id, type, title, description, price){
     this.id = id;
+    this.type = type;
     this.title = title;
     this.description = description;
     this.price = price;
   }
 }
 
-function newService(id, title, description, price, services){
-  let service = new Servicio (id++, title, description, price);
+function newService(id, type, title, description, price, services){
+  let service = new Servicio (id++, type, title, description, price);
 
   services.push(service);
 }
@@ -47,7 +48,7 @@ function addToCart(id, services){
   var id = id;
   for (i=0 ; i<services.length ; i++){
     if(id == services[i].id){
-      let service = new Servicio (services[i].id, services[i].title, services[i].description, services[i].price);
+      let service = new Servicio (services[i].id, services[i].type, services[i].title, services[i].description, services[i].price);
       
       cart.push(service);
     }
@@ -62,6 +63,11 @@ function removeFromCart(id, services){
       cart.splice(i,1);
     }
   } 
+}
+
+function filterBy(filter, services){
+  let filtered = services.filter(service => service.type.includes(filter));
+  console.log(filtered);
 }
 
 function message(){
@@ -85,9 +91,12 @@ function message(){
 
 name = prompt("Cómo te llamas?");
 
-newService (id++, "Diseño de logo", "Descripción del trabajo y su alcance.", 18000, services);
-newService (id++, "Diseño de logo y manual de marca", "Descripción del trabajo y su alcance.", 28000, services);
-newService (id++, "Rediseño de logo", "Descripción del trabajo y su alcance.", 13000, services);
+newService (id++, "Branding", "Diseño de logo", "Descripción del trabajo y su alcance.", 18000, services);
+newService (id++, "Branding", "Diseño de logo y manual de marca", "Descripción del trabajo y su alcance.", 25000, services);
+newService (id++, "Branding", "Rediseño de logo", "Descripción del trabajo y su alcance.", 13000, services);
+newService (id++, "Development", "Landing page", "Descripción del trabajo y su alcance.", 19000, services);
+newService (id++, "Development", "Sitio en WordPress", "Descripción del trabajo y su alcance.", 36000, services);
+newService (id++, "Development", "Sitio web (HTML, CSS)", "Descripción del trabajo y su alcance.", 28000, services);
 
 addToCart (1 , services);
 addToCart (2 , services);
@@ -96,4 +105,6 @@ addToCart (3 , services);
 
 console.log(services);
 console.log(cart);
+
+filterBy("Development", services)
 message();
