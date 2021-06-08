@@ -1,0 +1,60 @@
+header{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: salmon;
+  padding: 1.5rem;
+  color: white;
+
+  h1{
+    font-size: 3rem;
+    font-weight: 100;
+    text-transform: uppercase;
+    margin: 1.5rem 0 1rem;
+  }
+  h2{
+    font-size: 1.25rem;
+    font-weight: 400;
+    text-align: center;
+  }
+}
+
+main{
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  width: 85%;
+  margin: 0 auto;
+  padding: 5rem 0;
+
+  .card{
+    width: 300px;
+    margin: 1rem;
+
+    .card-body{
+      .btn-light{
+        width: 49%;
+        background-color: lightgrey;
+        border-color: lightgrey;      
+      }
+      .btn-primary{
+        width: 49%;
+        background-color: salmon;
+        border-color: salmon;
+      }
+    }
+  }
+}
+
+footer{
+  background-color: salmon;
+  padding: 1rem;
+  color: white;
+  text-align: center;
+
+  .disclamer{
+    width: 60%;
+    margin: 0 auto .25rem;
+  }
+}
