@@ -1,3 +1,4 @@
+//"use strict"
 /*-----------------------------------------
                    DATA
   ---------------------------------------*/
@@ -7,58 +8,99 @@ services=[{
   "title":"Diseño de logo",
   "description":"Descripción del trabajo y su alcance.",
   "category":"branding",
-  "price": 18000
+  "price": 18000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },{
   "id":"02",
   "title":"Diseño de logo y manual de marca",
   "description":"Descripción del trabajo y su alcance.",
   "category":"branding",
-  "price": 25000
+  "price": 25000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },{
   "id":"03",
   "title":"Rediseño de logo",
   "description":"Descripción del trabajo y su alcance.",
   "category":"branding",
-  "price": 13000
+  "price": 13000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },{
   "id":"04",
   "title":"Landing page",
   "description":"Descripción del trabajo y su alcance.",
   "category":"development",
-  "price": 18000
+  "price": 18000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },{
   "id":"05",
   "title":"Sitio en WordPress",
   "description":"Descripción del trabajo y su alcance.",
   "category":"development",
-  "price": 18000
+  "price": 35000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },{
   "id":"06",
   "title":"Sitio web (HTML, CSS)",
   "description":"Descripción del trabajo y su alcance.",
   "category":"development",
-  "price": 18000
+  "price": 28000,
+  "imgBanner":"https://www.fillmurray.com/g/1200/675",
+  "imgCard":"https://www.fillmurray.com/g/300/300",
+  "imgThumb":"https://www.fillmurray.com/g/80/80",
+  "pageUrl":"#"
 },];
 
-cart = [];
+var cart = [];
 
 var d = new Date();
 var id = services.length;
 id++;
 
-let catalogue = document.getElementById("store-catalogue");
+var catalogue = document.getElementById("store-catalogue");
 
 /*-----------------------------------------
                 CLASSES
   ---------------------------------------*/
 
   class Servicio{
-    constructor(id, type, title, description, price){
+    constructor(id, title, description, category, price, imgBanner, imgCard, imgThumb, pageUrl){
       this.id = id;
-      this.type = type;
       this.title = title;
       this.description = description;
+      this.category = category;
       this.price = price;
+      this.imgBanner = imgBanner;
+      this.imgCard = imgCard;
+      this.imgThumb = imgThumb;
+      this.pageUrl = pageUrl;
+    }
+  }
+
+  class CartItem{
+    constructor(id, title, description, category, price, imgThumb){
+      this.id = id;
+      this.title = title;
+      this.description = description;
+      this.category = category;
+      this.price = price;
+      this.imgThumb = imgThumb;
+      this.quantity = 1;
+      this.subtotal = price;
     }
   }
 
@@ -72,7 +114,7 @@ dateToday = () => {
   let mm = new Date().getMonth() +1;
   let yy = new Date().getFullYear().toString().slice(-2);
 
-  var today = dd + "/" + mm + "/" + yy;
+  let today = dd + "/" + mm + "/" + yy;
   return today;
 };
 
@@ -90,48 +132,77 @@ dateUntil = (d) => {
 }
 
 //SERVICE CREATOR
-newService = (id, type, title, description, price, services) => {
-  let service = new Servicio (id++, type, title, description, price);
+newService = (id, title, description, category, price, imgBanner, imgCard, imgThumb) => {
+  let service = new Servicio (id++, title, description, category, price, imgBanner, imgCard, imgThumb);
 
   services.push(service);
 }
 
 //STORE CATALOGUE MANIPULATION
 addToCatalogue = () => {
-  for(product of services){
+  for(service of services){
     let item = document.createElement("div");
-    
-    item.innerHTML = `<div class="card"">
-      <img src="https://www.fillmurray.com/g/300/300" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="text-muted">`+product.category.toUpperCase()+`</h5>
-        <h5 class="card-title">`+product.title+`</h5>
-        <p class="card-text">`+product.description+`</p>
-        <div class="btn btn-light">AR$`+product.price+`</div>
-        <button class="btn btn-primary" onclick=addToCart(`+product.id+`)>Add to cart</button>
-      </div>
-    </div>`;
+    item.classList.add('card');
 
-    catalogue.appendChild(item);
+    item.innerHTML = `<img src="${service.imgCard}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="text-muted">${service.category.toUpperCase()}</h5>
+        <h5 class="card-title">${service.title}</h5>
+        <p class="card-text">${service.description}</p>
+        <div class="btn btn-light">$${service.price}</div>
+        <button id="item-${service.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i></button>
+      </div>`;
+
+      catalogue.appendChild(item);
+
+      let addBtn = document.getElementById(`item-${service.id}`);
+
+      addBtn.addEventListener('click', ()=>{addToCart(service.id)});
   }
 }
 
-filterBy = (filter, services) => {
-  let filtered = services.filter(service => service.type.includes(filter));
+filterByCategory = (value, services) => {
+  let filtered = services.filter(service => service.category.includes(value));
   console.log(filtered);
 }
 
 //CART MANIPULATION
 addToCart = (id) => {
   var id = id;
+  var result = false;
   for (i=0 ; i<services.length ; i++){
     if(id == services[i].id){
-      let service = new Servicio (services[i].id, services[i].type, services[i].title, services[i].description, services[i].price);
+      if (cart.length > 0){
+        for (item of cart){
+          if (item.id == id){
+            result = {
+              "match" : true,
+              "id" : cart.indexOf(item)
+            };
+          }
+        }
+        if(result.match===true){
+          let i = result.id;
+          cart[i].quantity++;
+          cart[i].subtotal = cart[i].quantity * cart[i].price;
+
+          console.log(cart);
+        } else {
+          let service = new CartItem (services[i].id, services[i].title, services[i].description, services[i].category, services[i].price, services[i].imgThumb);
+        
+          cart.push(service); 
+          console.log(cart);
+        }
+      } else {
+        let service = new CartItem (services[i].id, services[i].title, services[i].description, services[i].category, services[i].price, services[i].imgThumb);
       
-      cart.push(service); 
-      console.log(cart);
+        cart.push(service); 
+        console.log(cart);
+      }
     }
   }
+
+  cartTotal();
 }
 
 removeFromCart = (id, services) => {
@@ -141,7 +212,19 @@ removeFromCart = (id, services) => {
       
       cart.splice(i,1);
     }
-  } 
+  }
+
+  cartTotal();
+}
+
+cartTotal = () =>{
+  let total = 0;
+
+  for(i=0 ; i<cart.length ; i++){
+    total = total + cart[i].subtotal;
+  }
+
+  console.log(total);
 }
 
 message = () => {
@@ -166,18 +249,5 @@ message = () => {
 /*-----------------------------------------
                 USAGE
   ---------------------------------------*/
-/*
-name = prompt("Cómo te llamas?");
-addToCart (01 , services);
-addToCart (02 , services);
-removeFromCart (02 , services);
-addToCart (03 , services);
 
-
-
-filterBy("Development", services)
-message();
-*/
-
-console.log(services);
-addToCatalogue();
+  addToCatalogue();
