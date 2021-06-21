@@ -1,77 +1,19 @@
 //"use strict"
 /*-----------------------------------------
-                   DATA
+                VARIABLES
   ---------------------------------------*/
-
-services=[{
-  "id":"01",
-  "title":"Diseño de logo",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"branding",
-  "price": 18000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},{
-  "id":"02",
-  "title":"Diseño de logo y manual de marca",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"branding",
-  "price": 25000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},{
-  "id":"03",
-  "title":"Rediseño de logo",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"branding",
-  "price": 13000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},{
-  "id":"04",
-  "title":"Landing page",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"development",
-  "price": 18000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},{
-  "id":"05",
-  "title":"Sitio en WordPress",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"development",
-  "price": 35000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},{
-  "id":"06",
-  "title":"Sitio web (HTML, CSS)",
-  "description":"Descripción del trabajo y su alcance.",
-  "category":"development",
-  "price": 28000,
-  "imgBanner":"https://www.fillmurray.com/g/1200/675",
-  "imgCard":"https://www.fillmurray.com/g/300/300",
-  "imgThumb":"https://www.fillmurray.com/g/80/80",
-  "pageUrl":"#"
-},];
-
 var cart = [];
+let totalCart=0;
 
 var d = new Date();
-var id = services.length;
-id++;
+var servicesId = services.length;
+servicesId++;
 
-var catalogue = document.getElementById("store-catalogue");
+var app = document.getElementById("app");
+
+var storeBtn = document.getElementById("store");
+var bagBtn = document.getElementById("bag");
+var profileBtn = document.getElementById("profile");
 
 /*-----------------------------------------
                 CLASSES
@@ -138,8 +80,64 @@ newService = (id, title, description, category, price, imgBanner, imgCard, imgTh
   services.push(service);
 }
 
-//STORE CATALOGUE MANIPULATION
-addToCatalogue = () => {
+// TOKEN MANIPULATION
+var token = localStorage.getItem('Token');
+
+if (!token){
+  console.log('No existe un token de usuario. Debe iniciar sesión o registrarse para continuar.');
+}
+
+logIn = () => {
+  var userLogged = prompt('Ingrese su nombre de usuario.');
+  var passwordLogged = prompt('Ingrese su contraseña.');
+  var user = {
+    'name': false,
+    'pass': false
+  };
+
+  for (authorized of members){
+
+    if(authorized.user==userLogged){
+      user.name = true;
+    }
+    if(authorized.password==passwordLogged){
+      user.pass = true;
+    }
+    if (user.name !== user.pass){
+      user.name = false;
+      user.pass = false;
+    }
+  }
+
+  if (user.name==true && user.pass==true){
+    let tokenCreated="";
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        
+    for ( var i = 0; i < 8; i++ ) {
+      tokenCreated += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+      
+    localStorage.setItem("token", tokenCreated);
+    console.log("Iniciaste sesión correctamente")
+    return tokenCreated;
+  } else {
+    return ('El usuario y contraseña ingresados no corresponden con un usuario registrado.');
+  }
+}
+
+logOut = () => {
+  localStorage.removeItem('token');
+  return ('Cerraste la sesión correctamente');
+}
+
+//STORE MANIPULATION
+loadStore = () => {
+  let title = document.createElement('div');
+  title.classList.add('title');
+  title.innerHTML = `<h1>Cotiza tus necesidades</h1>
+      <h2>Elegi los servicios que te interesa contratar y consulta un precio aproximado para los mismos.</h2>`;
+  app.appendChild(title);
+
   for(service of services){
     let item = document.createElement("div");
     item.classList.add('card');
@@ -153,11 +151,11 @@ addToCatalogue = () => {
         <button id="item-${service.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i></button>
       </div>`;
 
-      catalogue.appendChild(item);
+      app.appendChild(item);
 
       let addBtn = document.getElementById(`item-${service.id}`);
 
-      addBtn.addEventListener('click', ()=>{addToCart(service.id)});
+      addBtn.addEventListener('click', () => {addToCart(service.id)});
   }
 }
 
@@ -168,6 +166,7 @@ filterByCategory = (value, services) => {
 
 //CART MANIPULATION
 addToCart = (id) => {
+  console.log(id);
   var id = id;
   var result = false;
   for (i=0 ; i<services.length ; i++){
@@ -218,36 +217,22 @@ removeFromCart = (id, services) => {
 }
 
 cartTotal = () =>{
-  let total = 0;
+  let result=0;
 
-  for(i=0 ; i<cart.length ; i++){
-    total = total + cart[i].subtotal;
+  for(item of cart){
+    totalCart = result + parseInt(item.subtotal);
   }
-
-  console.log(total);
-}
-
-message = () => {
-  let price=0;
-
-  dateToday = dateToday();
-  dateUntil = dateUntil(d);
-  
-  if(cart.length === 1){
-    price = cart[0].price;
-
-    console.log("Hola " + name + ". Cómo estás? Hoy " + dateToday + ", el servicio que estas adquiriendo tiene un costo de: $" + price + ". Este precio es válido hasta: " + dateUntil);
-  } else {
-    for (i=0 ; i<cart.length ; i++) {
-      price = price + cart[i].price;
-    }
-
-    console.log("Hola " + name + ". Cómo estás? Hoy " + dateToday + ", los servicios que estas adquiriendo tienen un costo de: $" + price + ". Este precio es válido hasta: " + dateUntil);
+  if(cart.length==0){
+    totalCart = 0;
   }
 }
 
 /*-----------------------------------------
                 USAGE
   ---------------------------------------*/
+/*limpiar=()=>{
+    app.innerHTML="";
+  };
+  limpiar();*/
 
-  addToCatalogue();
+  loadStore();
