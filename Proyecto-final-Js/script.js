@@ -1,6 +1,8 @@
 //"use strict"
 /*-----------------------------------------
                 VARIABLES
+
+  Creo algunas de las variables y capturo algunos elementos que voy a necesitar mas adelante
   ---------------------------------------*/
 var cart = [];
 let totalCart=0;
@@ -15,12 +17,12 @@ var app = document.getElementById("app");
 
 var storeBtn = document.getElementById("store");
 var bagBtn = document.getElementById("bag");
-var profileBtn = document.getElementById("profile");
 
 /*-----------------------------------------
                 CLASSES
   ---------------------------------------*/
 
+  // Creo una clase constructora de servicios
   class Servicio{
     constructor(id, title, description, category, price, imgBanner, imgCard, imgThumb, pageUrl){
       this.id = id;
@@ -35,6 +37,7 @@ var profileBtn = document.getElementById("profile");
     }
   }
 
+  // Creo una clase contructora de elementos del carrito
   class CartItem{
     constructor(id, title, description, category, price, imgThumb){
       this.id = id;
@@ -53,6 +56,7 @@ var profileBtn = document.getElementById("profile");
   ---------------------------------------*/
 
 //DATE FUNCTIONS
+// Funcion para capturar el dia actual
 dateToday = () => {
   let dd = new Date().getDate();
   let mm = new Date().getMonth() +1;
@@ -62,6 +66,7 @@ dateToday = () => {
   return today;
 };
 
+// Funcion para sumarle 15 dias a la fecha actual y definir un plazo de vigencia
 dateUntil = () => {
   let dias = 15;
   
@@ -75,6 +80,7 @@ dateUntil = () => {
 }
 
 //SERVICE CREATOR
+// Funcion para crear un nuevo servicio
 newService = (id, title, description, category, price, imgBanner, imgCard, imgThumb) => {
   let service = new Servicio (id++, title, description, category, price, imgBanner, imgCard, imgThumb);
 
@@ -82,12 +88,15 @@ newService = (id, title, description, category, price, imgBanner, imgCard, imgTh
 }
 
 // TOKEN MANIPULATION
+// Traigo del localStorage el token de sesion
 var token = localStorage.getItem('Token');
 
+// Chequeo que el token exista
 if (!token){
   console.log('No existe un token de usuario. Debe iniciar sesión o registrarse para continuar.');
 }
 
+// Prototipo de funcion para iniciar sesion, generar un token y guardarlo en el localStorage
 logIn = () => {
   var userLogged = prompt('Ingrese su nombre de usuario.');
   var passwordLogged = prompt('Ingrese su contraseña.');
@@ -125,15 +134,15 @@ logIn = () => {
     return ('El usuario y contraseña ingresados no corresponden con un usuario registrado.');
   }
 }
-
+// Prototipo de funcion para cerrar sesion y borrar el token del localStorage
 logOut = () => {
   localStorage.removeItem('token');
   return ('Cerraste la sesión correctamente');
 }
 
 //STORE MANIPULATION
+// Funcion para crear los elementos y cargar los servicios en el DOM
 loadStore = () => {
-  let cards=[];
   let title = document.createElement('div');
   title.classList.add('title');
   title.innerHTML = `<h1>Cotiza tus necesidades</h1>
@@ -152,7 +161,6 @@ loadStore = () => {
         <button id="item-${service.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i></button>
       </div>`;
       app.appendChild(item);
-      cards.push(service.id);
 
       let itemButtonId = "item-" + service.id.toString();  
       let itemListenerId = service.id.toString();  
@@ -161,12 +169,14 @@ loadStore = () => {
   }
 }
 
+// Prototipo de funcion para filtrar los servicios por categoria
 filterByCategory = (value, services) => {
   let filtered = services.filter(service => service.category.includes(value));
   console.log(filtered);
 }
 
 //CART MANIPULATION
+// Funcion para crear los objetos del carrito, agregarlos al array asegurandome de que si ya esta seleccionado, incremente la cantidad de ese servicio en vez de crear un objeto nuevo, y calcular el total del carrito
 addToCart = (id) => {
   var id = id;
   var result = false;
@@ -202,6 +212,7 @@ addToCart = (id) => {
   cartTotal();
 }
 
+// Funcion para remover un servicio de carrito
 removeFromCart = (id, services) => {
   var id = id;
   for (i=0 ; i<services.length ; i++){
@@ -210,10 +221,9 @@ removeFromCart = (id, services) => {
       cart.splice(i,1);
     }
   }
-
-  cartTotal();
 }
 
+// Funcion para calcular el total del carrito
 cartTotal = () =>{
   let result=0;
 
@@ -225,9 +235,3 @@ cartTotal = () =>{
     totalCart = 0;
   }
 }
-
-/*-----------------------------------------
-                USAGE
-  ---------------------------------------*/
-
-  dateUntil();
