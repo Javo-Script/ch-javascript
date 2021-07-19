@@ -6,6 +6,8 @@ var cart = [];
 let totalCart=0;
 
 var d = new Date();
+var valid="";
+
 var servicesId = services.length;
 servicesId++;
 
@@ -60,7 +62,7 @@ dateToday = () => {
   return today;
 };
 
-dateUntil = (d) => {
+dateUntil = () => {
   let dias = 15;
   
   d.setDate(d.getDate() + dias);
@@ -69,8 +71,7 @@ dateUntil = (d) => {
   let mm = d.getMonth() +1;
   let yy = d.getFullYear().toString().slice(-2);
 
-  let until = dd + "/" + mm + "/" + yy;
-  return until;
+  valid = dd + "/" + mm + "/" + yy;
 }
 
 //SERVICE CREATOR
@@ -132,6 +133,7 @@ logOut = () => {
 
 //STORE MANIPULATION
 loadStore = () => {
+  let cards=[];
   let title = document.createElement('div');
   title.classList.add('title');
   title.innerHTML = `<h1>Cotiza tus necesidades</h1>
@@ -141,7 +143,6 @@ loadStore = () => {
   for(service of services){
     let item = document.createElement("div");
     item.classList.add('card');
-
     item.innerHTML = `<img src="${service.imgCard}" class="card-img-top" alt="...">
       <div class="card-body">
         <h5 class="text-muted">${service.category.toUpperCase()}</h5>
@@ -150,12 +151,13 @@ loadStore = () => {
         <div class="btn btn-light">$${service.price}</div>
         <button id="item-${service.id}" class="btn btn-primary"><i class="fas fa-shopping-cart"></i></button>
       </div>`;
-
       app.appendChild(item);
+      cards.push(service.id);
 
-      let addBtn = document.getElementById(`item-${service.id}`);
-
-      addBtn.addEventListener('click', () => {addToCart(service.id)});
+      let itemButtonId = "item-" + service.id.toString();  
+      let itemListenerId = service.id.toString();  
+      let itemBtn = document.getElementById(itemButtonId);
+      itemBtn.addEventListener('click', () => {addToCart(itemListenerId)});
   }
 }
 
@@ -166,7 +168,6 @@ filterByCategory = (value, services) => {
 
 //CART MANIPULATION
 addToCart = (id) => {
-  console.log(id);
   var id = id;
   var result = false;
   for (i=0 ; i<services.length ; i++){
@@ -185,18 +186,15 @@ addToCart = (id) => {
           cart[i].quantity++;
           cart[i].subtotal = cart[i].quantity * cart[i].price;
 
-          console.log(cart);
         } else {
           let service = new CartItem (services[i].id, services[i].title, services[i].description, services[i].category, services[i].price, services[i].imgThumb);
         
-          cart.push(service); 
-          console.log(cart);
+          cart.push(service);
         }
       } else {
         let service = new CartItem (services[i].id, services[i].title, services[i].description, services[i].category, services[i].price, services[i].imgThumb);
       
-        cart.push(service); 
-        console.log(cart);
+        cart.push(service);
       }
     }
   }
@@ -221,6 +219,7 @@ cartTotal = () =>{
 
   for(item of cart){
     totalCart = result + parseInt(item.subtotal);
+    result = totalCart;
   }
   if(cart.length==0){
     totalCart = 0;
@@ -230,9 +229,5 @@ cartTotal = () =>{
 /*-----------------------------------------
                 USAGE
   ---------------------------------------*/
-/*limpiar=()=>{
-    app.innerHTML="";
-  };
-  limpiar();*/
 
-  loadStore();
+  dateUntil();
